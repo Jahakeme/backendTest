@@ -3,30 +3,31 @@ const express = require('express')
 const mongoose = require('mongoose')
 require('dotenv').config()
 
+// Application modules
+const connectdb = require('./database/mongodbController') // Database connection handler
+const errorHandler = require('./middleware/errorMiddleware') // Global error handling middleware
+
 // Import routes
-const authRoutes = require('./routes/authRoutes')
-const userRoutes = require('./routes/userRoutes')
+const authRouter = require('./router/authRouter')
+const userRouter = require('./router/userRouter')
 
 // Create an Express application using the top level function
 const app = express()
 const port = process.env.PORT || 4000
+
+// Initialize database connection
+connectdb()
 
 // Middleware Configuration    
 app.use(express.json()) // Parse incoming JSON requests
 app.use(express.urlencoded({ extended: true }));
 
 // Use the imported routes
-app.use('/auth', authRoutes)
-app.use('/users', userRoutes)
+app.use('/api', authRouter)
+app.use('/api', userRouter)
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('Connected to MongoDB')
-    })
-    .catch((error) => {
-        console.error('MongoDB connection failed:', error)
-    })
+// Global error handling middleware
+app.use(errorHandler)
 
 // Make the app listen on port 4000
 app.listen(port, function(){
