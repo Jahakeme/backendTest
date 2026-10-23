@@ -21,15 +21,15 @@ function authenticateToken(request, response, next) {
                 message: "Invalid or expired token."
             })
         }
+
+        // Attach the authenticated user's ID to the request
+        request.user = {
+            id: decoded.sub
+        }
+
+        // Proceed to the next middleware or route handler
+        next();
     })
-
-    // Attach the authenticated user's ID to the request
-    request.user = {
-        id: decoded.sub
-    }
-
-    // Proceed to the next middleware or route handler
-    next();
 }
 
 module.exports = authenticateToken
