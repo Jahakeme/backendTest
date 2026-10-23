@@ -33,13 +33,20 @@ router.post('/register', async function(request, response) {
             message: "Registration successful.",
             user
         })
-    } catch(error) {
-        // Handle duplicate emails, including concurrent requests
+   } catch (error) {
+        console.error('Registration error:', error);
+
+        // Handle duplicate emails
         if (error.code === 11000) {
             return response.status(409).json({
                 message: 'Email is already registered.'
-            })
+            });
         }
+
+        // Respond to all other errors
+        return response.status(500).json({
+            message: 'An error occurred during registration.'
+        });
     }
 })
 
